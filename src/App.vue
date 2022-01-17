@@ -5,12 +5,7 @@ import GameSelector from './views/GameSelector.vue'
 import { ref } from 'vue'
 
 const step = ref(0)
-const steps = [
-  PathSelector,
-  PlatformSelector,
-  GameSelector
-]
-
+const steps = [PathSelector, PlatformSelector, GameSelector]
 </script>
 
 <template>
@@ -18,5 +13,4 @@ const steps = [
   <button @click="step < 2 && step++">Next</button>
 </template>
 
-<style>
-</style>
+<style></style>

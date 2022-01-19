@@ -1,8 +1,18 @@
 import express from 'express'
+import { getCurrentPlatforms } from './src/back/dirUtils'
+
 const app = express()
 
 app.get('/', (req, res, next) => {
-  console.log('asdasdasd')
+  next()
+})
+
+app.get('/getPlatforms', async (req, res, next) => {
+  const platforms = await getCurrentPlatforms('D:/LaunchBox')
+
+  console.log(platforms)
+  res.json(JSON.parse(platforms))
+
   next()
 })
 

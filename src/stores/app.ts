@@ -35,6 +35,7 @@ export const useAppStore = defineStore({
     availableGames: null as IPlatform | null,
     selectedGames: [] as IPlatform[],
     platformList: [] as IPlatformData[],
+    selectedPlatforms: [] as IPlatformData[],
   }),
 
   actions: {

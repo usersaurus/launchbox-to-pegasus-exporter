@@ -9,8 +9,6 @@ app.get('/', (req, res, next) => {
 
 app.get('/getPlatforms', async (req, res, next) => {
   const platforms = await getCurrentPlatforms('D:/LaunchBox')
-
-  console.log(platforms)
   res.json(JSON.parse(platforms))
 
   next()

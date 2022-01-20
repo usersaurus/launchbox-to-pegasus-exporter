@@ -6,14 +6,6 @@ import { ref } from 'vue'
 
 const step = ref(0)
 const steps = [PathSelector, PlatformSelector, GameSelector]
-
-fetch('/getPlatforms')
-  .then((res) => res.json())
-  .then((data) => {
-    data.LaunchBox.Platform.forEach((platform: any) => {
-      console.log(platform.Name)
-    })
-  })
 </script>
 
 <template>

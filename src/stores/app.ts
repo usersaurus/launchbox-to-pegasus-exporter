@@ -21,7 +21,7 @@ export interface IPlatformData {
   developer: string
   manufacturer: string
   notes: string
-  assets?: [{ mediaType: string; folder: string }]
+  assets?: { mediaType: string; folder: string }[]
 }
 
 export interface IPlatform extends IPlatformData {

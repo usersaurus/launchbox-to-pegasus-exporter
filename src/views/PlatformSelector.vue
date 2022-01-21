@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { getPlatforms } from '../services/getPlatforms'
 import { IPlatformData } from '../stores/app'
-import { onBeforeMount, ref, watchEffect, onBeforeUnmount } from 'vue'
+import { onBeforeMount, ref, onBeforeUnmount } from 'vue'
 import { useAppStore } from '../stores/app'
 
 const store = useAppStore()
@@ -23,10 +23,6 @@ const selectedPlatforms = ref<string[]>([])
 onBeforeMount(async () => {
   platforms.value = await getPlatforms(store.launchboxPath)
   store.platformList = platforms.value
-})
-
-watchEffect(() => {
-  console.log(selectedPlatforms.value)
 })
 
 onBeforeUnmount(() => {

@@ -1,10 +1,10 @@
+import { postData } from '../lib/fetch'
 import { IPlatformData } from '../stores/app'
 
-export const getPlatforms = async (): Promise<IPlatformData[]> => {
-  const res = await fetch('/getPlatforms')
-  const data = await res.json()
+export const getPlatforms = async (path: string): Promise<IPlatformData[]> => {
+  const res = await postData('/getPlatforms', { path })
 
-  return data.LaunchBox.Platform.map((platform: Record<string, string>) =>
+  return res.LaunchBox.Platform.map((platform: Record<string, string>) =>
     transformPlatform(platform)
   )
 }

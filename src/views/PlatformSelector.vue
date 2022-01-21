@@ -21,7 +21,7 @@ const platforms = ref<IPlatformData[]>([])
 const selectedPlatforms = ref<string[]>([])
 
 onBeforeMount(async () => {
-  platforms.value = await getPlatforms()
+  platforms.value = await getPlatforms(store.launchboxPath)
   store.platformList = platforms.value
 })
 

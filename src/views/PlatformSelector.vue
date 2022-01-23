@@ -17,11 +17,11 @@
 
 <script setup lang="ts">
 import { getPlatforms } from '../back/bff/getPlatforms'
-import { IPlatformData, useAppStore } from '../stores/app'
+import { IPlatform, useAppStore } from '../stores/app'
 import { onBeforeMount, ref, onBeforeUnmount } from 'vue'
 
 const store = useAppStore()
-const platforms = ref<IPlatformData[]>([])
+const platforms = ref<IPlatform[]>([])
 const selectedPlatforms = ref<string[]>([])
 
 onBeforeMount(async () => {

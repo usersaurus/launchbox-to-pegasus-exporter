@@ -15,7 +15,7 @@ export interface IGame {
 /**
  * Current platforms are available in the Launchbox/Data/Platforms.xml file.
  */
-export interface IPlatformData {
+export interface IPlatform {
   name: string
   releaseDate: string
   developer: string
@@ -24,18 +24,14 @@ export interface IPlatformData {
   assets?: { mediaType: string; folder: string }[]
 }
 
-export interface IPlatform extends IPlatformData {
-  games: IGame[]
-}
-
 export const useAppStore = defineStore({
   id: 'app',
   state: () => ({
     launchboxPath: '',
     availableGames: null as IPlatform | null,
     selectedGames: [] as IPlatform[],
-    platformList: [] as IPlatformData[],
-    selectedPlatforms: [] as IPlatformData[],
+    platformList: [] as IPlatform[],
+    selectedPlatforms: [] as IPlatform[],
   }),
 
   actions: {
@@ -47,7 +43,7 @@ export const useAppStore = defineStore({
       this.availableGames = games
     },
 
-    setAvailablePlatforms(platforms: IPlatformData[]) {
+    setAvailablePlatforms(platforms: IPlatform[]) {
       this.platformList = platforms
     },
   },

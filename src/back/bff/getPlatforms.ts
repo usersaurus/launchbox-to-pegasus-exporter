@@ -1,8 +1,8 @@
 import { postData } from '../../lib/fetch'
-import { IPlatformData } from '../../stores/app'
+import { IPlatform } from '../../stores/app'
 import { groupBy } from 'lodash'
 
-export const getPlatforms = async (path: string): Promise<IPlatformData[]> => {
+export const getPlatforms = async (path: string): Promise<IPlatform[]> => {
   const res = await postData('/getPlatforms', { path })
 
   const assetsArray = groupBy(res.LaunchBox.PlatformFolder, 'Platform')
@@ -15,7 +15,7 @@ export const getPlatforms = async (path: string): Promise<IPlatformData[]> => {
 const transformPlatform = (
   platform: Record<string, string>,
   assets: { [key: string]: Record<string, string>[] }
-): IPlatformData => {
+): IPlatform => {
   return {
     name: platform.Name,
     releaseDate: platform.ReleaseDate,

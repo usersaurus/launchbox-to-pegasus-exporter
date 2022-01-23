@@ -25,7 +25,7 @@ export interface IPlatformData {
 }
 
 export interface IPlatform extends IPlatformData {
-  games: [IGame]
+  games: IGame[]
 }
 
 export const useAppStore = defineStore({

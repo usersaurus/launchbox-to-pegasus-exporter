@@ -1,20 +1,24 @@
 <template>
-  <template v-for="(platform, i) in platforms" :key="i">
-    <input
-      v-model="selectedPlatforms"
-      type="checkbox"
-      :name="platform.name"
-      :value="i"
-    />
-    {{ platform.name }}
-  </template>
+  <suspense>
+    <template #default>
+      <template v-for="(platform, i) in platforms" :key="i">
+        <input
+          v-model="selectedPlatforms"
+          type="checkbox"
+          :name="platform.name"
+          :value="i"
+        />
+        {{ platform.name }}
+      </template>
+    </template>
+    <template #fallback> Loading... </template>
+  </suspense>
 </template>
 
 <script setup lang="ts">
-import { getPlatforms } from '../services/getPlatforms'
-import { IPlatformData } from '../stores/app'
+import { getPlatforms } from '../back/bff/getPlatforms'
+import { IPlatformData, useAppStore } from '../stores/app'
 import { onBeforeMount, ref, onBeforeUnmount } from 'vue'
-import { useAppStore } from '../stores/app'
 
 const store = useAppStore()
 const platforms = ref<IPlatformData[]>([])

@@ -1,5 +1,5 @@
-import { postData } from '../lib/fetch'
-import { IPlatformData } from '../stores/app'
+import { postData } from '../../lib/fetch'
+import { IPlatformData } from '../../stores/app'
 import { groupBy } from 'lodash'
 
 export const getPlatforms = async (path: string): Promise<IPlatformData[]> => {

@@ -37,3 +37,13 @@ export const getCurrentPlatforms = async (baseDir: string) => {
     return json
   })
 }
+
+export const getGames = async (baseDir: string, platform: string) => {
+  return fs.promises
+    .readFile(`${baseDir}/${Dir.Platforms}/${platform}.xml`)
+    .then((data) => {
+      const json = parser.toJson(data)
+
+      return json
+    })
+}

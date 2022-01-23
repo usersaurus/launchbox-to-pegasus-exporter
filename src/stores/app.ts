@@ -22,6 +22,7 @@ export interface IPlatform {
   manufacturer: string
   notes: string
   assets?: { mediaType: string; folder: string }[]
+  games: IGame[]
 }
 
 export const useAppStore = defineStore({

@@ -26,5 +26,6 @@ const transformPlatform = (
       mediaType: asset.MediaType,
       folder: asset.FolderPath,
     })),
+    games: [],
   }
 }

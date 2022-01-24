@@ -1,5 +1,9 @@
 import express from 'express'
-import { getCurrentPlatforms, getGames } from './src/back/dirUtils'
+import {
+  getCurrentPlatforms,
+  getGames,
+  createMetadata,
+} from './src/back/dirUtils'
 import bodyParser from 'body-parser'
 
 const app = express()
@@ -20,6 +24,13 @@ app.post('/getPlatforms', async (req, res, next) => {
 app.post('/getGames', async (req, res, next) => {
   const games = await getGames(req.body.path, req.body.platform)
   res.send(JSON.parse(games))
+
+  next()
+})
+
+app.post('/createMetadata', async (req, res, next) => {
+  const response = await createMetadata(req.body.path, req.body.platforms)
+  res.send(response)
 
   next()
 })

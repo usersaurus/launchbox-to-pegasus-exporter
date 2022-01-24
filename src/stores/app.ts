@@ -1,8 +1,12 @@
 import { defineStore, acceptHMRUpdate } from 'pinia'
 
+/**
+ * Game data structure
+ */
 export interface IGame {
   title: string
   platform: string
+  /** Path to the rom game. Follows the format: `Games\[platform]\[game].[ext]` */
   path: string
   publisher: string
   version: string

@@ -6,6 +6,7 @@
 
 import fs from 'fs'
 import parser from 'xml2json'
+import { IPlatform } from '../stores/app'
 
 enum File {
   Platforms = 'Data/Platforms.xml',
@@ -14,6 +15,7 @@ enum File {
 enum Dir {
   Platforms = 'Data/Platforms',
   Games = 'Games',
+  NewPegasusDataStructure = 'Pegasus',
 }
 
 export const readFilesInDir = (dir: string) => {
@@ -46,4 +48,98 @@ export const getGames = async (baseDir: string, platform: string) => {
 
       return json
     })
+}
+
+export const createMetadata = async (
+  baseDir: string,
+  platformData: IPlatform[]
+) => {
+  const dirsToCreate = [
+    'boxFront',
+    'boxBack',
+    'boxSpine',
+    'box',
+    'cartridge',
+    'logo',
+    'marquee',
+    'bezel',
+    'panel',
+    'banner',
+    'background',
+    'music',
+    'screenshot',
+    'titlescreen',
+    'video',
+  ]
+
+  const assetsDir = {
+    boxFront: ['Box - Front', 'Box - Front - Reconstructed'],
+    boxBack: ['Box - Back', 'Box - Back - Reconstructed'],
+    boxSpine: null,
+    box: 'Box - 3D',
+    cartridge: 'Cart - 3D',
+    logo: 'Clear Logo',
+    marquee: 'Arcade - Marquee',
+    bezel: 'Arcade - Cabinet',
+    panel: 'Arcade - Control Panel',
+    banner: 'Banner',
+    background: 'Screenshot - Game Title',
+    music: '',
+    screenshot: 'Screenshot - Gameplay',
+    titlescreen: 'Screenshot - Game Title',
+    video: '',
+  }
+
+  cleanDir(baseDir)
+  await createFolderStructure(baseDir, dirsToCreate, platformData)
+  await copyRomFiles(baseDir, platformData)
+
+  return { response: 200 }
+}
+
+const createFolderStructure = async (
+  baseDir: string,
+  dirs: string[],
+  platformData: IPlatform[]
+) => {
+  if (!fs.existsSync(`${baseDir}/${Dir.NewPegasusDataStructure}`)) {
+    fs.mkdirSync(`${baseDir}/${Dir.NewPegasusDataStructure}`)
+  }
+
+  platformData.forEach(async (platform) => {
+    fs.mkdirSync(`${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}`)
+
+    await Promise.all(
+      dirs.map((dir) =>
+        fs.promises.mkdir(
+          `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${dir}`
+        )
+      )
+    )
+  })
+}
+
+const copyRomFiles = async (baseDir: string, platformData: IPlatform[]) => {
+  platformData.forEach(async (platform) => {
+    const games = platform.games
+
+    games.forEach(async (game) => {
+      const romPath = `${baseDir}/${game.path}`
+      const romName = game.path.split('\\').pop()
+
+      if (fs.existsSync(romPath)) {
+        fs.copyFileSync(
+          romPath,
+          `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${romName}`
+        )
+      }
+    })
+  })
+}
+
+const cleanDir = (baseDir: string) => {
+  fs.rmSync(`${baseDir}/${Dir.NewPegasusDataStructure}`, {
+    recursive: true,
+    force: true,
+  })
 }

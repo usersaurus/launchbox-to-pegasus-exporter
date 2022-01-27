@@ -16,6 +16,27 @@ const transformPlatform = (
   platform: Record<string, string>,
   assets: { [key: string]: Record<string, string>[] }
 ): IPlatform => {
+  const imageFolders: { [key: string]: string } = {
+    boxFront: 'Box - Front',
+    boxBack: 'Box - Back',
+    box: 'Box - 3D',
+    cartridge: 'Cart - 3D',
+    logo: 'Clear Logo',
+    marquee: 'Arcade - Marquee',
+    bezel: 'Arcade - Cabinet',
+    panel: 'Arcade - Control Panel',
+    banner: 'Banner',
+    background: 'Screenshot - Game Title',
+    screenshot: 'Screenshot - Gameplay',
+    titlescreen: 'Screenshot - Game Title',
+  }
+
+  const getPegasusFolder = (launchboxFolder: string) => {
+    return Object.keys(imageFolders).find(
+      (folder) => imageFolders[folder] === launchboxFolder
+    )
+  }
+
   return {
     name: platform.Name,
     releaseDate: platform.ReleaseDate,
@@ -25,6 +46,7 @@ const transformPlatform = (
     assets: assets[platform.Name].map((asset: Record<string, string>) => ({
       mediaType: asset.MediaType,
       folder: asset.FolderPath,
+      pegasusFolder: getPegasusFolder(asset.MediaType),
     })),
     games: [],
   }

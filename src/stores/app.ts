@@ -25,7 +25,11 @@ export interface IPlatform {
   developer: string
   manufacturer: string
   notes: string
-  assets?: { mediaType: string; folder: string }[]
+  assets?: {
+    mediaType: string
+    folder: string
+    pegasusFolder: string | undefined
+  }[]
   games: IGame[]
 }
 

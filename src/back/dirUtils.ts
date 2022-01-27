@@ -1,12 +1,6 @@
-/**
- * Flow
- * - pick Launchbox base directory
- * - read platform list
- */
-
 import fs from 'fs'
 import parser from 'xml2json'
-import { IPlatform } from '../stores/app'
+import { IGame, IPlatform } from '../stores/app'
 
 enum File {
   Platforms = 'Data/Platforms.xml',
@@ -16,20 +10,6 @@ enum Dir {
   Platforms = 'Data/Platforms',
   Games = 'Games',
   NewPegasusDataStructure = 'Pegasus',
-}
-
-export const readFilesInDir = (dir: string) => {
-  const directoryPath = dir
-
-  fs.readdir(directoryPath, function (err, files) {
-    if (err) {
-      return console.log('Unable to scan directory: ' + err)
-    }
-
-    files.forEach(function (file) {
-      console.log(file)
-    })
-  })
 }
 
 export const getCurrentPlatforms = async (baseDir: string) => {
@@ -54,7 +34,19 @@ export const createMetadata = async (
   baseDir: string,
   platformData: IPlatform[]
 ) => {
-  const dirsToCreate = [
+  cleanDir(baseDir)
+  await createFolderStructure(baseDir, platformData)
+  await copyRomFiles(baseDir, platformData)
+  await copyAssets(baseDir, platformData)
+
+  return { response: 200 }
+}
+
+const createFolderStructure = async (
+  baseDir: string,
+  platformData: IPlatform[]
+) => {
+  const dirs = [
     'boxFront',
     'boxBack',
     'boxSpine',
@@ -72,48 +64,16 @@ export const createMetadata = async (
     'video',
   ]
 
-  const assetsDir = {
-    boxFront: ['Box - Front', 'Box - Front - Reconstructed'],
-    boxBack: ['Box - Back', 'Box - Back - Reconstructed'],
-    boxSpine: null,
-    box: 'Box - 3D',
-    cartridge: 'Cart - 3D',
-    logo: 'Clear Logo',
-    marquee: 'Arcade - Marquee',
-    bezel: 'Arcade - Cabinet',
-    panel: 'Arcade - Control Panel',
-    banner: 'Banner',
-    background: 'Screenshot - Game Title',
-    music: '',
-    screenshot: 'Screenshot - Gameplay',
-    titlescreen: 'Screenshot - Game Title',
-    video: '',
-  }
-
-  cleanDir(baseDir)
-  await createFolderStructure(baseDir, dirsToCreate, platformData)
-  await copyRomFiles(baseDir, platformData)
-
-  return { response: 200 }
-}
-
-const createFolderStructure = async (
-  baseDir: string,
-  dirs: string[],
-  platformData: IPlatform[]
-) => {
   if (!fs.existsSync(`${baseDir}/${Dir.NewPegasusDataStructure}`)) {
     fs.mkdirSync(`${baseDir}/${Dir.NewPegasusDataStructure}`)
   }
 
-  platformData.forEach(async (platform) => {
+  platformData.forEach((platform) => {
     fs.mkdirSync(`${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}`)
 
-    await Promise.all(
-      dirs.map((dir) =>
-        fs.promises.mkdir(
-          `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${dir}`
-        )
+    dirs.forEach((dir) =>
+      fs.mkdirSync(
+        `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${dir}`
       )
     )
   })
@@ -142,4 +102,66 @@ const cleanDir = (baseDir: string) => {
     recursive: true,
     force: true,
   })
+}
+
+const sanitizeGameName = (gameName: string) => {
+  return gameName.replace(/[^a-zA-Z0-9-, ]/g, '_')
+}
+
+/** Improve this part */
+const copyAssets = (baseDir: string, platformData: IPlatform[]) => {
+  platformData.forEach((platform) => {
+    const platformGames = platform.games
+    const platformAssets = platform.assets
+
+    platformGames.forEach((game) => {
+      platformAssets?.forEach((asset) => {
+        if (!asset.pegasusFolder) return
+
+        let filesInAssetFolder = getFileListFromFolder(
+          `${baseDir}/${asset.folder}/${game.region.split(',')[0].trim()}/`
+        )
+
+        if (filesInAssetFolder) {
+          copyAssetFile(filesInAssetFolder, game, baseDir, asset, platform)
+        } else {
+          filesInAssetFolder = getFileListFromFolder(
+            `${baseDir}/${asset.folder}/`
+          )
+
+          if (filesInAssetFolder) {
+            copyAssetFile(filesInAssetFolder, game, baseDir, asset, platform)
+          }
+        }
+      })
+    })
+  })
+}
+
+const getFileListFromFolder = (folder: string) => {
+  return fs.existsSync(folder) && fs.readdirSync(folder)
+}
+
+const copyAssetFile = (
+  filesInAssetFolder: string[],
+  game: IGame,
+  baseDir: string,
+  asset: {
+    mediaType?: string
+    folder: string
+    pegasusFolder: string | undefined
+  },
+  platform: IPlatform
+) => {
+  const gameName = sanitizeGameName(game.title)
+  const assetFile = filesInAssetFolder.find((file) => file.includes(gameName))
+
+  if (assetFile) {
+    fs.copyFileSync(
+      `${baseDir}/${asset.folder}/${game.region
+        .split(',')[0]
+        .trim()}/${assetFile}`,
+      `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${asset.pegasusFolder}/${assetFile}`
+    )
+  }
 }

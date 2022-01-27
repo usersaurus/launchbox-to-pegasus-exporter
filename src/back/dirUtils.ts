@@ -105,10 +105,9 @@ const cleanDir = (baseDir: string) => {
 }
 
 const sanitizeGameName = (gameName: string) => {
-  return gameName.replace(/[^a-zA-Z0-9-, ]/g, '_')
+  return gameName.replace(/[^a-zA-Z0-9-,! ]/g, '_')
 }
 
-/** Improve this part */
 const copyAssets = (baseDir: string, platformData: IPlatform[]) => {
   platformData.forEach((platform) => {
     const platformGames = platform.games

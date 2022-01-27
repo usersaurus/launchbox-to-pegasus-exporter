@@ -29,6 +29,8 @@ const transformPlatform = (
     background: 'Screenshot - Game Title',
     screenshot: 'Screenshot - Gameplay',
     titlescreen: 'Screenshot - Game Title',
+    video: 'Video',
+    music: 'Music',
   }
 
   const getPegasusFolder = (launchboxFolder: string) => {

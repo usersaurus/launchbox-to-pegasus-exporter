@@ -116,20 +116,35 @@ const copyAssets = (baseDir: string, platformData: IPlatform[]) => {
     platformGames.forEach((game) => {
       platformAssets?.forEach((asset) => {
         if (!asset.pegasusFolder) return
+        let assetsFolder = `${baseDir}/${asset.folder}/${game.region
+          .split(',')[0]
+          .trim()}/`
 
-        let filesInAssetFolder = getFileListFromFolder(
-          `${baseDir}/${asset.folder}/${game.region.split(',')[0].trim()}/`
-        )
+        let filesInAssetFolder = getFileListFromFolder(assetsFolder)
 
         if (filesInAssetFolder) {
-          copyAssetFile(filesInAssetFolder, game, baseDir, asset, platform)
-        } else {
-          filesInAssetFolder = getFileListFromFolder(
-            `${baseDir}/${asset.folder}/`
+          copyAssetFile(
+            filesInAssetFolder,
+            game,
+            assetsFolder,
+            baseDir,
+            asset,
+            platform
           )
+        } else {
+          assetsFolder = `${baseDir}/${asset.folder}/`
+
+          filesInAssetFolder = getFileListFromFolder(assetsFolder)
 
           if (filesInAssetFolder) {
-            copyAssetFile(filesInAssetFolder, game, baseDir, asset, platform)
+            copyAssetFile(
+              filesInAssetFolder,
+              game,
+              assetsFolder,
+              baseDir,
+              asset,
+              platform
+            )
           }
         }
       })
@@ -144,6 +159,7 @@ const getFileListFromFolder = (folder: string) => {
 const copyAssetFile = (
   filesInAssetFolder: string[],
   game: IGame,
+  assetsFolder: string,
   baseDir: string,
   asset: {
     mediaType?: string
@@ -157,9 +173,7 @@ const copyAssetFile = (
 
   if (assetFile) {
     fs.copyFileSync(
-      `${baseDir}/${asset.folder}/${game.region
-        .split(',')[0]
-        .trim()}/${assetFile}`,
+      `${assetsFolder}/${assetFile}`,
       `${baseDir}/${Dir.NewPegasusDataStructure}/${platform.name}/${asset.pegasusFolder}/${assetFile}`
     )
   }
